@@ -1,8 +1,8 @@
 import os
 import requests
-import scrape_data
 from bs4 import BeautifulSoup
 import datetime
+import time
 
 
 
@@ -19,22 +19,27 @@ def get_week_menu():
     week_menu = map(lambda x: str(x)[3:-4].strip().replace('\n', ' ').replace('.', ''), week_menu.find_all('p'))
     return list(week_menu)
 
-week = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag"]
-
 token = os.environ.get('TOKEN')
 
 week_menu = get_week_menu()
 today = datetime.date.today().weekday()
 
-url = 'https://slack.com/api/chat.postMessage'
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + token,
-    }
-myobj = {
-    'channel': 'dev', 
-    'text': "I dag er det mest sannsynlig *" + week_menu[today].lower() + "* i kantinen på høytek.:tobwat:",
-    }
+def send_message(message):
+    url = 'https://slack.com/api/chat.postMessage'
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        }
+    myobj = {
+        'channel': 'dev', 
+        'text': message,
+        }
 
-x = requests.post(url, headers=headers, json = myobj)
-print("Status Code", x.status_code)
+    x = requests.post(url, headers=headers, json = myobj)
+    print("Status Code", x.status_code)
+
+send_message("Dagens meny i kantinen på høytek er::drum_with_drumsticks::drum_with_drumsticks:")
+
+time.sleep(3)
+
+send_message("Mest sannsynlig *" + week_menu[today].lower() + "*!:tobwat::tada:")
